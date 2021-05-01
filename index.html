@@ -10,7 +10,7 @@
     <title>ToDo List</title>
 
     <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Original+Surfer&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&display=swap" rel="stylesheet">
 
     <style>
 
@@ -25,7 +25,7 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        font-family: 'Original Surfer', cursive;
+        font-family: 'Merriweather', serif;
         font-weight: 600;
         font-size: 20px;
       }
@@ -48,12 +48,13 @@
 
       .todo-item-input-container{
         display: flex;
-        width:calc(100% - 20px);
+        width:100%;
         padding:10px;
         margin:20px 0;
         border-radius:5px;
         background: lightblue;
         align-items: center;
+        justify-content: center;
       }
 
       .todo-item-input{
@@ -73,7 +74,7 @@
       
       .list-item{
         display: flex;
-        width:100%;
+        width:calc(100% - 10px);
         justify-content:space-between;
         align-items: center;
         margin:5px 0;
@@ -110,10 +111,7 @@
   <body>
     <header>ToDo List</header>
     <main>
-      <div class = todo-item-input-container>
-        <label for="todo-item-input">New Task:</label>
-        <input class="todo-item-input" placeholder="Your new task here"></input>
-      </div>
+      <div class = todo-item-input-container><label for="todo-item-input">New Task:</label><input class="todo-item-input" placeholder="Your new task here"></input></div>
       <div class="list-items-container-todo"></div>
     </main>
     <footer>ToDo List made by Felipe Gil.</footer>
@@ -125,33 +123,86 @@
 
       const listItemsContainerTodo = document.querySelector(".list-items-container-todo");
 
+      const svgTrashIcon=`<svg class="deleteIcon" onclick="deleteForever(this)" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M0 0h24v24H0V0z" fill="none"/><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zm2.46-7.12l1.41-1.41L12 12.59l2.12-2.12 1.41 1.41L13.41 14l2.12 2.12-1.41 1.41L12 15.41l-2.12 2.12-1.41-1.41L10.59 14l-2.13-2.12zM15.5 4l-1-1h-5l-1 1H5v2h14V4z"/></svg>`
+
+      let newTodoItemHTML;
+
+      let listObject = {
+        unchecked:[],
+        checked:[]
+      };
+
+      if(localStorage.getItem('itemList')){
+        listObject = retrieveFromLocalStorage();
+
+        listObject.unchecked.forEach(element => {
+          newTodoItemHTML = `<div class="list-item"><label for="todo-list-item-check">${element}</label><input type="checkbox" class="todo-list-item-check" onclick="checkboxIsSelected(this)"></input></div>`
+          listItemsContainerTodo.innerHTML += newTodoItemHTML;
+        });
+
+        listObject.checked.forEach(element => {
+          newTodoItemHTML = `<div class="list-item done"><label for="todo-list-item-check">${element}</label>${svgTrashIcon}</div>`
+          listItemsContainerTodo.innerHTML += newTodoItemHTML;
+        });
+      }
+
+      function storeInLocalStorage(){
+        let valueToBeStored = JSON.stringify(listObject)
+        localStorage.setItem('itemList', valueToBeStored)
+      }
+
+      function retrieveFromLocalStorage(){
+        let storedValue = localStorage.getItem('itemList');
+        let valueToBeRetrieved = JSON.parse(storedValue);
+        return valueToBeRetrieved;
+      } 
+
       function addNewListItem(event) {
           if (event.key === "Enter") {
               const todoItemValue = todoItemInput.value;
               if (!todoItemValue == "") {
 
-                  const newTodoItemHTML =
-                      `<div class="list-item"><label for="todo-list-item-check">${todoItemValue}</label><input type="checkbox" class="todo-list-item-check" onclick="checkboxIsSelected(event)"></input></div>`
+                listObject.unchecked.push(todoItemValue);
 
-                  listItemsContainerTodo.innerHTML += newTodoItemHTML;
-                  todoItemInput.value = "";
+                const newTodoItemHTML =
+                    `<div class="list-item"><label for="todo-list-item-check">${todoItemValue}</label><input type="checkbox" class="todo-list-item-check" onclick="checkboxIsSelected(this)"></input></div>`
 
+                listItemsContainerTodo.innerHTML += newTodoItemHTML;
+                todoItemInput.value = "";
+
+                storeInLocalStorage();
+                console.log(retrieveFromLocalStorage());
               }
           }
-      }
+      }  
 
       function checkboxIsSelected(event) {
-          const listItem = event.target.parentNode;
-          const label = listItem.firstChild;
+          const listItem = event.parentNode;
+          
+          let label = listItem.firstChild;
+          index = listObject.unchecked.indexOf(label.textValue);
+
+          listObject.checked.push(...listObject.unchecked.splice(index, 1));
+          storeInLocalStorage();
+          console.log(retrieveFromLocalStorage());
+
           const checkbox = listItem.lastChild;
           label.classList.add('done');
 
           listItem.removeChild(checkbox)
-          listItem.innerHTML+= `<svg class="deleteIcon" onclick="deleteForever(this)" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M0 0h24v24H0V0z" fill="none"/><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zm2.46-7.12l1.41-1.41L12 12.59l2.12-2.12 1.41 1.41L13.41 14l2.12 2.12-1.41 1.41L12 15.41l-2.12 2.12-1.41-1.41L10.59 14l-2.13-2.12zM15.5 4l-1-1h-5l-1 1H5v2h14V4z"/></svg>`
+          listItem.innerHTML+= svgTrashIcon;
       }
 
       function deleteForever(event){
           const listItem = event.parentNode;
+          let label = event.previousSibling;
+          
+          index = listObject.checked.indexOf(label.textValue);
+          listObject.checked.splice(index, 1);
+
+          storeInLocalStorage();
+          console.log(retrieveFromLocalStorage());
+
           listItem.parentNode.removeChild(listItem);
       }
 
