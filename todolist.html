@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+
+<!-- Adicione em anexo ao e-mail um arquivo HTML único, contendo uma implementação sua de uma Lista de Tarefas (To Do List) em HTML + Javascript, de forma simples, sem nenhuma biblioteca externa. -->
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ToDo List</title>
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Original+Surfer&display=swap" rel="stylesheet">
+
+    <style>
+      body,
+      html {
+        width: 100%;
+        height: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-family: 'Original Surfer', cursive;
+        font-weight: 600;
+      }
+
+      header{
+        background: lightcoral;
+        width:300px;
+        padding: 10px;
+        border-radius: 5px;
+        text-align: center;
+        font-size: 30px;
+      }
+
+      .todo-item-input-container{
+        display: flex;
+        width:300px;
+        padding:10px;
+        margin:20px 0;
+        border-radius:5px;
+        background: lightblue;
+        align-items: center;
+      }
+
+      .todo-item-input{
+        height:30px;
+        flex-grow: 1;
+        margin-left:10px;
+      }
+
+      .list-items-container{
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        
+      }
+
+      .list-item{
+        display: flex;
+        width:100%;
+        justify-content:space-between;
+        align-items: center;
+        margin:5px 0;
+        padding: 5px;
+        border-radius:5px;
+        border: 1px solid lightgray;
+      }
+
+      .todo-list-item-check{
+        height:20px;
+        width:20px;
+        flex-shrink: 0;
+      }  
+
+      footer{
+        margin: 30px 0 10px;
+        font-size: 12px;
+      }
+
+    </style>
+
+  </head>
+  <body>
+    <header>ToDo List</header>
+    <main>
+      <div class = todo-item-input-container>
+        <label for="todo-item-input">New Task:</label>
+        <input class="todo-item-input" placeholder="Your new task here"></input>
+      </div>
+      <div class="list-items-container">
+          <div class="list-item">
+            <label for="todo-list-item-check">Estudar física.</label>
+            <input type="checkbox" class="todo-list-item-check"></input>
+          </div>
+          <div class="list-item">
+            <label for="todo-list-item-check">Estudar física.</label>
+            <input type="checkbox" class="todo-list-item-check"></input>
+          </div>
+          <div class="list-item">
+            <label for="todo-list-item-check">Estudar física.</label>
+            <input type="checkbox" class="todo-list-item-check"></input>
+          </div>
+          <div class="list-item">
+            <label for="todo-list-item-check">Estudar física.</label>
+            <input type="checkbox" class="todo-list-item-check"></input>
+          </div>
+          <div class="list-item">
+            <label for="todo-list-item-check">Estudar física.</label>
+            <input type="checkbox" class="todo-list-item-check"></input>
+          </div>
+      </div>
+    </main>
+    <footer>ToDo List made by Felipe Gil.</footer>
+
+    <script>
+       
+    </script>
+
+  </body>
+</html>
