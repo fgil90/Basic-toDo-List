@@ -14,10 +14,6 @@
 
     <style>
 
-      :root{
-        --appWidth: 300px;
-      }
-
       body,
       html {
         width: 100%;
@@ -32,7 +28,6 @@
 
       header{
         background: lightcoral;
-        width: var(--appWidth);
         padding: 10px;
         border-radius: 5px;
         text-align: center;
@@ -42,13 +37,11 @@
       }
 
       main{
-        width:var(--appWidth);
         max-width: 768px;
       }
 
       .todo-item-input-container{
         display: flex;
-        width:100%;
         padding:10px;
         margin:20px 0;
         border-radius:5px;
@@ -83,6 +76,10 @@
         border: 1px solid lightgray;
       }
 
+      .delete-icon-container{
+        display: flex;
+      }
+
       .todo-list-item-check{
         height:20px;
         width:20px;
@@ -92,6 +89,7 @@
       .done{
         color:red;
         text-decoration:line-through;
+        flex-grow: 1 !important;
       }
 
       footer{
@@ -99,9 +97,9 @@
         font-size: 12px;
       }
 
-      @media (min-width:400px){
-        :root{
-          --appWidth: 80%;
+      @media (min-width:468px){
+        main{
+          width:90%
         }
       }
 
@@ -136,15 +134,16 @@
         listObject = retrieveFromLocalStorage();
 
         listObject.unchecked.forEach(element => {
-          newTodoItemHTML = `<div class="list-item"><label for="todo-list-item-check">${element}</label><input type="checkbox" class="todo-list-item-check" onclick="checkboxIsSelected(this)"></input></div>`
+          newTodoItemHTML = `<div class="list-item"><label for="todo-list-item-check">${element}</label><div class='delete-icon-container'></div><input type="checkbox" class="todo-list-item-check" onclick="checkboxIsSelected(this)"></input></div>`
           listItemsContainerTodo.innerHTML += newTodoItemHTML;
         });
 
         listObject.checked.forEach(element => {
-          newTodoItemHTML = `<div class="list-item done"><label for="todo-list-item-check">${element}</label>${svgTrashIcon}</div>`
+          newTodoItemHTML = `<div class="list-item"><label class="done" for="todo-list-item-check">${element}</label><div class='delete-icon-container'>${svgTrashIcon}</div><input type="checkbox" checked class="todo-list-item-check" onclick="checkboxIsSelected(this)"></input></div>`
           listItemsContainerTodo.innerHTML += newTodoItemHTML;
         });
       }
+
 
       function storeInLocalStorage(){
         let valueToBeStored = JSON.stringify(listObject)
@@ -165,7 +164,7 @@
                 listObject.unchecked.push(todoItemValue);
 
                 const newTodoItemHTML =
-                    `<div class="list-item"><label for="todo-list-item-check">${todoItemValue}</label><input type="checkbox" class="todo-list-item-check" onclick="checkboxIsSelected(this)"></input></div>`
+                    `<div class="list-item"><label for="todo-list-item-check">${todoItemValue}</label><div class='delete-icon-container'></div><input type="checkbox" class="todo-list-item-check" onchange="checkboxIsSelected(this)"></input></div>`
 
                 listItemsContainerTodo.innerHTML += newTodoItemHTML;
                 todoItemInput.value = "";
@@ -178,24 +177,41 @@
 
       function checkboxIsSelected(event) {
           const listItem = event.parentNode;
+          const label = listItem.querySelector('label');
+
+          let div = listItem.querySelector('.delete-icon-container');
+          let svg = document.createElement('svg');
+          svg.innerHTML = svgTrashIcon;
+
+          console.log(event.checked);
           
-          let label = listItem.firstChild;
-          index = listObject.unchecked.indexOf(label.textValue);
+          if (event.checked){
 
-          listObject.checked.push(...listObject.unchecked.splice(index, 1));
-          storeInLocalStorage();
-          console.log(retrieveFromLocalStorage());
+            let index = listObject.unchecked.indexOf(label.textContent);
+            listObject.checked.push(...listObject.unchecked.splice(index, 1));
 
-          const checkbox = listItem.lastChild;
-          label.classList.add('done');
+            storeInLocalStorage();
+            console.log(retrieveFromLocalStorage());
 
-          listItem.removeChild(checkbox)
-          listItem.innerHTML+= svgTrashIcon;
+            label.classList.add('done');
+            div.appendChild(svg.firstChild);
+
+          }else{
+
+            let index = listObject.checked.indexOf(label.textContent);
+            listObject.unchecked.push(...listObject.checked.splice(index, 1));
+
+            storeInLocalStorage();
+            console.log(retrieveFromLocalStorage());
+
+            label.classList.remove('done');
+            div.removeChild(div.firstChild);
+          }
       }
 
       function deleteForever(event){
-          const listItem = event.parentNode;
-          let label = event.previousSibling;
+          const listItem = event.parentNode.parentNode;
+          let label = listItem.querySelector('label');
           
           index = listObject.checked.indexOf(label.textValue);
           listObject.checked.splice(index, 1);
